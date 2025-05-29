@@ -11,8 +11,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using ILoggerFactory = Facturacion.API.Domain.Contracts.ILoggerFactory;
-using LoggerFactory = Facturacion.API.Domain.Services.LoggerFactory;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,110 +18,132 @@ var builder = WebApplication.CreateBuilder(args);
 // CONFIGURACIÓN DE SERVICIOS
 // ==============================================================================
 
-// Configuración de base de datos
+// Configuración de Entity Framework
 builder.Services.AddDbContext<DBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Configuración de controladores
+// Configuración de controllers
 builder.Services.AddControllers();
 
 // Configuración de CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowSpecificOrigins",
-        policy =>
-        {
-            policy.WithOrigins("http://localhost:3000", "https://localhost:3001", "http://localhost:5000")
-                  .AllowAnyHeader()
-                  .AllowAnyMethod()
-                  .AllowCredentials();
-        });
+    options.AddPolicy("AllowSpecificOrigins", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000", "https://localhost:3001") // Ajustar según necesidad
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
 });
 
-// Configuración de autenticación JWT
-var jwtKey = builder.Configuration["JwtSettings:Key"] ?? throw new InvalidOperationException("JWT Key no configurada");
-var jwtIssuer = builder.Configuration["JwtSettings:Issuer"];
-var jwtAudience = builder.Configuration["JwtSettings:Audience"];
+// Configuración de JWT
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+var key = Encoding.UTF8.GetBytes(jwtSettings["Key"] ?? throw new InvalidOperationException("JWT Key no configurada"));
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false; // Solo para desarrollo
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
-            ValidateIssuer = !string.IsNullOrEmpty(jwtIssuer),
-            ValidIssuer = jwtIssuer,
-            ValidateAudience = !string.IsNullOrEmpty(jwtAudience),
-            ValidAudience = jwtAudience,
-            ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero
-        };
-    });
-
-builder.Services.AddAuthorization();
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateIssuer = !string.IsNullOrEmpty(jwtSettings["Issuer"]),
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidateAudience = !string.IsNullOrEmpty(jwtSettings["Audience"]),
+        ValidAudience = jwtSettings["Audience"],
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero
+    };
+});
 
 // Configuración de Swagger
-builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddCustomSwagger();
 
 // ==============================================================================
-// INYECCIÓN DE DEPENDENCIAS - SERVICIOS CORE
+// INYECCIÓN DE DEPENDENCIAS - REPOSITORIOS
+// ==============================================================================
+
+// Repositorios base
+builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddScoped<IRolRepository, RolRepository>();
+builder.Services.AddScoped<ITokenRepository, TokenRepository>();
+builder.Services.AddScoped<IAccesoRepository, AccesoRepository>();
+
+// Repositorios de facturación
+builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
+builder.Services.AddScoped<ICategoriaArticuloRepository, CategoriaArticuloRepository>();
+builder.Services.AddScoped<IArticuloRepository, ArticuloRepository>();
+builder.Services.AddScoped<IFacturaRepository, FacturaRepository>();
+builder.Services.AddScoped<IFacturaDetalleRepository, FacturaDetalleRepository>();
+builder.Services.AddScoped<IReporteRepository, ReporteRepository>();
+builder.Services.AddScoped<ICalculoFacturacionRepository, CalculoFacturacionRepository>();
+builder.Services.AddScoped<IValidacionNegocioRepository, ValidacionNegocioRepository>();
+
+// ==============================================================================
+// INYECCIÓN DE DEPENDENCIAS - SERVICIOS
 // ==============================================================================
 
 // Servicios de logging
 builder.Services.AddScoped<IFileLogger, FileLoggerService>();
-builder.Services.AddScoped<ILogRepository, LogRepository>();
-builder.Services.AddScoped<ILoggerFactory, LoggerFactory>();
-
-// Servicios de autenticación y acceso
-builder.Services.AddScoped<ITokenRepository, TokenRepository>();
-builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-builder.Services.AddScoped<IRolRepository, RolRepository>();
-builder.Services.AddScoped<IAccesoRepository, AccesoRepository>();
+builder.Services.AddScoped<Facturacion.API.Domain.Contracts.ILoggerFactory, Facturacion.API.Domain.Services.LoggerFactory>();
 
 // ==============================================================================
-// INYECCIÓN DE DEPENDENCIAS - SERVICIOS DE FACTURACIÓN
+// INYECCIÓN DE DEPENDENCIAS - ATTRIBUTES
 // ==============================================================================
 
-// Servicios de clientes
-builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
-
-// Servicios de artículos
-builder.Services.AddScoped<IArticuloRepository, ArticuloRepository>();
-builder.Services.AddScoped<ICategoriaArticuloRepository, CategoriaArticuloRepository>();
-
-// Servicios de facturación
-builder.Services.AddScoped<IFacturaRepository, FacturaRepository>();
-builder.Services.AddScoped<IFacturaDetalleRepository, FacturaDetalleRepository>();
-builder.Services.AddScoped<ICalculoFacturacionRepository, CalculoFacturacionRepository>();
-builder.Services.AddScoped<IValidacionNegocioRepository, ValidacionNegocioRepository>();
-
-// Servicios de reportes
-builder.Services.AddScoped<IReporteRepository, ReporteRepository>();
-
-// ==============================================================================
-// CONFIGURACIÓN DE ATRIBUTOS Y MIDDLEWARES
-// ==============================================================================
-
-// Registrar atributos como servicios
-builder.Services.AddScoped<ExceptionAttribute>();
 builder.Services.AddScoped<LogAttribute>();
+builder.Services.AddScoped<ExceptionAttribute>();
+builder.Services.AddScoped<ValidarModeloAttribute>();
 builder.Services.AddScoped<AccesoAttribute>();
 
-// Configuración de logging de aplicación
+// ==============================================================================
+// CONFIGURACIÓN ADICIONAL
+// ==============================================================================
+
+// Configuración para JSON
+builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
+{
+    options.SerializerOptions.PropertyNamingPolicy = null; // Mantener nombres originales
+});
+
+builder.Services.AddControllers()
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        options.SuppressModelStateInvalidFilter = true; // Usar nuestras validaciones personalizadas
+    });
+
+// Configuración de Health Checks
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<DBContext>();
+
+// ==============================================================================
+// CONFIGURACIÓN DE LOGGING
+// ==============================================================================
+
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 
-// Configurar formato de fecha y cultura
-builder.Services.Configure<RequestLocalizationOptions>(options =>
+// Configurar niveles de log según el entorno
+if (builder.Environment.IsDevelopment())
 {
-    var supportedCultures = new[] { "es-CO", "es-ES" };
-    options.SetDefaultCulture(supportedCultures[0])
-           .AddSupportedCultures(supportedCultures)
-           .AddSupportedUICultures(supportedCultures);
-});
+    builder.Logging.SetMinimumLevel(LogLevel.Debug);
+}
+else
+{
+    builder.Logging.SetMinimumLevel(LogLevel.Information);
+}
+
+// ==============================================================================
+// BUILD DE LA APLICACIÓN
+// ==============================================================================
 
 var app = builder.Build();
 
@@ -131,7 +151,10 @@ var app = builder.Build();
 // CONFIGURACIÓN DEL PIPELINE DE MIDDLEWARE
 // ==============================================================================
 
-// Configuración del entorno de desarrollo
+// Middleware de manejo de errores (debe ir primero)
+app.UseCustomMiddleware();
+
+// Configuración para Development
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -143,88 +166,81 @@ else
     app.UseHsts();
 }
 
-// Middlewares de seguridad y redirección
+// Middleware de seguridad
 app.UseHttpsRedirection();
 
-// Middleware de CORS
+// CORS (debe ir antes de Authentication y Authorization)
 app.UseCustomCors();
 
-// Middleware de localización
-app.UseRequestLocalization();
-
-// Middlewares de autenticación y autorización
+// Autenticación y autorización
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Middlewares personalizados (logging y manejo de errores)
-app.UseCustomMiddleware();
+// Health checks
+app.UseHealthChecks("/health");
 
-// Configuración de rutas
+// Configuración de endpoints
 app.UseCustomEndpoints();
 
 // ==============================================================================
-// INICIALIZACIÓN DE LA BASE DE DATOS
+// INICIALIZACIÓN DE BASE DE DATOS
 // ==============================================================================
 
-// Crear scope para servicios
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    var logger = services.GetRequiredService<ILogger<Program>>();
-
     try
     {
-        // Obtener el contexto de base de datos
         var context = services.GetRequiredService<DBContext>();
 
-        // Verificar la conexión a la base de datos
-        logger.LogInformation("Verificando conexión a la base de datos...");
-
+        // Verificar conexión a la base de datos
         if (context.Database.CanConnect())
         {
-            logger.LogInformation("? Conexión a la base de datos exitosa");
+            app.Logger.LogInformation("? Conexión a base de datos establecida correctamente");
 
-            // Opcional: aplicar migraciones pendientes
+            // Aplicar migraciones pendientes (opcional)
             // context.Database.Migrate();
         }
         else
         {
-            logger.LogError("? No se pudo conectar a la base de datos");
+            app.Logger.LogError("? No se pudo conectar a la base de datos");
         }
     }
     catch (Exception ex)
     {
-        logger.LogError(ex, "? Error durante la inicialización de la base de datos");
+        app.Logger.LogError(ex, "? Error al verificar la conexión a la base de datos");
     }
 }
 
 // ==============================================================================
-// CONFIGURACIÓN DE URLs Y PUERTO
+// CONFIGURACIÓN DE RUTAS PREDETERMINADAS
 // ==============================================================================
 
-// Configurar URLs si no están definidas
-if (!app.Environment.IsDevelopment())
-{
-    app.Urls.Add("http://0.0.0.0:5000");
-    app.Urls.Add("https://0.0.0.0:5001");
-}
-
-// Mensaje de inicio
-app.Logger.LogInformation("?? Facturación API iniciándose...");
-app.Logger.LogInformation("?? Ambiente: {Environment}", app.Environment.EnvironmentName);
-app.Logger.LogInformation("?? URLs disponibles:");
-
-foreach (var url in app.Urls)
-{
-    app.Logger.LogInformation("   - {Url}", url);
-}
-
+// Redireccionar la raíz a Swagger en desarrollo
 if (app.Environment.IsDevelopment())
 {
-    app.Logger.LogInformation("?? Swagger UI disponible en: /swagger");
+    app.MapGet("/", () => Results.Redirect("/swagger"));
 }
 
-app.Logger.LogInformation("? Facturación API iniciada correctamente");
+// ==============================================================================
+// INFORMACIÓN DE INICIO
+// ==============================================================================
 
-// Ejecutar la aplicación
-app.Run();
+app.Logger.LogInformation("?? Aplicación Facturación API iniciada");
+app.Logger.LogInformation("?? Entorno: {Environment}", app.Environment.EnvironmentName);
+app.Logger.LogInformation("?? Swagger disponible en: /swagger");
+app.Logger.LogInformation("?? Health check disponible en: /health");
+
+// ==============================================================================
+// EJECUTAR LA APLICACIÓN
+// ==============================================================================
+
+try
+{
+    app.Run();
+}
+catch (Exception ex)
+{
+    app.Logger.LogCritical(ex, "?? La aplicación terminó inesperadamente");
+    throw;
+}

@@ -12,6 +12,7 @@ C:\Fuentes\Prueba Facturacion\Facturacion.API.Domain\obj\Debug\net8.0\Facturacio
 C:\Fuentes\Prueba Facturacion\Facturacion.API.Domain\obj\Debug\net8.0\Facturacion.API.Domain.AssemblyInfoInputs.cache
 C:\Fuentes\Prueba Facturacion\Facturacion.API.Domain\obj\Debug\net8.0\Facturacion.API.Domain.AssemblyInfo.cs
 C:\Fuentes\Prueba Facturacion\Facturacion.API.Domain\obj\Debug\net8.0\Facturacion.API.Domain.csproj.CoreCompileInputs.cache
+C:\Fuentes\Prueba Facturacion\Facturacion.API.Domain\obj\Debug\net8.0\Facturacion.API.Domain.sourcelink.json
 C:\Fuentes\Prueba Facturacion\Facturacion.API.Domain\obj\Debug\net8.0\Facturac.AA4F107A.Up2Date
 C:\Fuentes\Prueba Facturacion\Facturacion.API.Domain\obj\Debug\net8.0\Facturacion.API.Domain.dll
 C:\Fuentes\Prueba Facturacion\Facturacion.API.Domain\obj\Debug\net8.0\refint\Facturacion.API.Domain.dll

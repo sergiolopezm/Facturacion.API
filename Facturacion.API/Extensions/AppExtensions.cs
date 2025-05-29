@@ -12,7 +12,7 @@ namespace Facturacion.API.Util.Extensions
             app.UseMiddleware<ErrorHandlingMiddleware>();
             app.UseMiddleware<LoggingMiddleware>();
 
-            return app;
+            return app; 
         }
 
         /// <summary>
@@ -20,6 +20,9 @@ namespace Facturacion.API.Util.Extensions
         /// </summary>
         public static IApplicationBuilder UseCustomEndpoints(this IApplicationBuilder app)
         {
+            // Añadir UseRouting antes de UseEndpoints
+            app.UseRouting();
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

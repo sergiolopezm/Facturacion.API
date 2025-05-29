@@ -1,10 +1,12 @@
 C:\Fuentes\Prueba Facturacion\Facturacion.API.Util\bin\Debug\net8.0\Facturacion.API.Util.deps.json
 C:\Fuentes\Prueba Facturacion\Facturacion.API.Util\bin\Debug\net8.0\Facturacion.API.Util.dll
 C:\Fuentes\Prueba Facturacion\Facturacion.API.Util\bin\Debug\net8.0\Facturacion.API.Util.pdb
+C:\Fuentes\Prueba Facturacion\Facturacion.API.Util\obj\Debug\net8.0\Facturacion.API.Util.csproj.AssemblyReference.cache
 C:\Fuentes\Prueba Facturacion\Facturacion.API.Util\obj\Debug\net8.0\Facturacion.API.Util.GeneratedMSBuildEditorConfig.editorconfig
 C:\Fuentes\Prueba Facturacion\Facturacion.API.Util\obj\Debug\net8.0\Facturacion.API.Util.AssemblyInfoInputs.cache
 C:\Fuentes\Prueba Facturacion\Facturacion.API.Util\obj\Debug\net8.0\Facturacion.API.Util.AssemblyInfo.cs
 C:\Fuentes\Prueba Facturacion\Facturacion.API.Util\obj\Debug\net8.0\Facturacion.API.Util.csproj.CoreCompileInputs.cache
+C:\Fuentes\Prueba Facturacion\Facturacion.API.Util\obj\Debug\net8.0\Facturacion.API.Util.sourcelink.json
 C:\Fuentes\Prueba Facturacion\Facturacion.API.Util\obj\Debug\net8.0\Facturacion.API.Util.dll
 C:\Fuentes\Prueba Facturacion\Facturacion.API.Util\obj\Debug\net8.0\refint\Facturacion.API.Util.dll
 C:\Fuentes\Prueba Facturacion\Facturacion.API.Util\obj\Debug\net8.0\Facturacion.API.Util.pdb
