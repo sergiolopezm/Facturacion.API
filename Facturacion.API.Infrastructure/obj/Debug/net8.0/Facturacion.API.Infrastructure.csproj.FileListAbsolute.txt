@@ -1,0 +1,17 @@
+C:\Fuentes\Prueba Facturacion\Facturacion.API.Infrastructure\bin\Debug\net8.0\Facturacion.API.Infrastructure.deps.json
+C:\Fuentes\Prueba Facturacion\Facturacion.API.Infrastructure\bin\Debug\net8.0\Facturacion.API.Infrastructure.runtimeconfig.json
+C:\Fuentes\Prueba Facturacion\Facturacion.API.Infrastructure\bin\Debug\net8.0\Facturacion.API.Infrastructure.dll
+C:\Fuentes\Prueba Facturacion\Facturacion.API.Infrastructure\bin\Debug\net8.0\Facturacion.API.Infrastructure.pdb
+C:\Fuentes\Prueba Facturacion\Facturacion.API.Infrastructure\bin\Debug\net8.0\Facturacion.API.Shared.dll
+C:\Fuentes\Prueba Facturacion\Facturacion.API.Infrastructure\bin\Debug\net8.0\Facturacion.API.Shared.pdb
+C:\Fuentes\Prueba Facturacion\Facturacion.API.Infrastructure\obj\Debug\net8.0\Facturacion.API.Infrastructure.csproj.AssemblyReference.cache
+C:\Fuentes\Prueba Facturacion\Facturacion.API.Infrastructure\obj\Debug\net8.0\Facturacion.API.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Fuentes\Prueba Facturacion\Facturacion.API.Infrastructure\obj\Debug\net8.0\Facturacion.API.Infrastructure.AssemblyInfoInputs.cache
+C:\Fuentes\Prueba Facturacion\Facturacion.API.Infrastructure\obj\Debug\net8.0\Facturacion.API.Infrastructure.AssemblyInfo.cs
+C:\Fuentes\Prueba Facturacion\Facturacion.API.Infrastructure\obj\Debug\net8.0\Facturacion.API.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Fuentes\Prueba Facturacion\Facturacion.API.Infrastructure\obj\Debug\net8.0\Facturac.00405521.Up2Date
+C:\Fuentes\Prueba Facturacion\Facturacion.API.Infrastructure\obj\Debug\net8.0\Facturacion.API.Infrastructure.dll
+C:\Fuentes\Prueba Facturacion\Facturacion.API.Infrastructure\obj\Debug\net8.0\refint\Facturacion.API.Infrastructure.dll
+C:\Fuentes\Prueba Facturacion\Facturacion.API.Infrastructure\obj\Debug\net8.0\Facturacion.API.Infrastructure.pdb
+C:\Fuentes\Prueba Facturacion\Facturacion.API.Infrastructure\obj\Debug\net8.0\Facturacion.API.Infrastructure.genruntimeconfig.cache
+C:\Fuentes\Prueba Facturacion\Facturacion.API.Infrastructure\obj\Debug\net8.0\ref\Facturacion.API.Infrastructure.dll
